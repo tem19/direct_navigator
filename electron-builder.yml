@@ -1,0 +1,27 @@
+appId: com.direct-navigator.app
+productName: direct_navigator
+directories:
+  buildResources: build
+  output: release/${version}
+files:
+  - out/**/*
+  - '!**/*.map'
+asarUnpack:
+  # Нативный модуль better-sqlite3 не должен паковаться в asar
+  - '**/node_modules/better-sqlite3/**'
+# Подпись и нотаризация отключены на этапе разработки.
+mac:
+  target:
+    - target: dmg
+      arch:
+        - arm64
+    - target: zip
+      arch:
+        - arm64
+  category: public.app-category.business
+  icon: build/icon.icns
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  identity: null
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}

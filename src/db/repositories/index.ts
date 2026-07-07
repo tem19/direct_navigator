@@ -4,6 +4,7 @@ export { CampaignRepository } from './campaignRepository';
 export { AdGroupRepository } from './adGroupRepository';
 export { AdRepository } from './adRepository';
 export { KeywordRepository } from './keywordRepository';
+export { SettingsRepository } from './settingsRepository';
 
 import type { Database } from 'better-sqlite3';
 import { AdGroupRepository } from './adGroupRepository';

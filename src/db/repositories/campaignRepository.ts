@@ -16,6 +16,16 @@ export class CampaignRepository extends BaseSyncRepository<Campaign, CampaignRow
     super(db, 'campaigns', campaignFromRow, campaignServerSnapshot);
   }
 
+  /** Все кампании для UI (кроме помеченных на удаление). Используется IPC `campaigns:list`. */
+  list(): Campaign[] {
+    return this.findAllVisible();
+  }
+
+  /** Кампания по локальному id (alias к findByLocalId). */
+  getById(localId: number): Campaign | null {
+    return this.findByLocalId(localId);
+  }
+
   /** Создать локально новую кампанию (sync_status='new', direct_id=NULL). */
   create(input: NewCampaign): number {
     const info = this.db

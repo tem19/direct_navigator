@@ -1,0 +1,40 @@
+.root {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  height: 100%;
+}
+
+.sidebar {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.brand {
+  font-weight: 600;
+  padding: 8px 10px;
+  color: var(--text);
+  /* Отступ под системный светофор macOS (titleBarStyle: hiddenInset). */
+  margin-top: 20px;
+}
+
+.navItem,
+.navItemActive {
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.navItemActive {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+
+.content {
+  overflow: auto;
+  padding: 24px;
+}

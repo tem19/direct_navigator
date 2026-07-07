@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import { describe, expect, it } from 'vitest';
-import { currentSchemaVersion, migrate } from '../migrate';
-import { MIGRATIONS } from '../migrations';
+import { currentSchemaVersion, migrate } from '@db/migrate';
+import { MIGRATIONS } from '@db/migrations';
 
 describe('migrations', () => {
   it('поднимает свежую БД прогоном всех миграций', () => {
@@ -11,12 +11,20 @@ describe('migrations', () => {
     const maxVersion = Math.max(...MIGRATIONS.map((m) => m.version));
     expect(currentSchemaVersion(db)).toBe(maxVersion);
 
-    const tables = db
-      .prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
-      .all()
-      .map((r: { name: string }) => r.name);
+    const tables = (
+      db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all() as {
+        name: string;
+      }[]
+    ).map((r) => r.name);
     expect(tables).toEqual(
-      expect.arrayContaining(['clients', 'campaigns', 'ad_groups', 'ads', 'keywords']),
+      expect.arrayContaining([
+        'clients',
+        'campaigns',
+        'ad_groups',
+        'ads',
+        'keywords',
+        'app_settings',
+      ]),
     );
   });
 
@@ -35,9 +43,7 @@ describe('migrations', () => {
     migrate(db);
     const now = new Date().toISOString();
     const c = db
-      .prepare(
-        `INSERT INTO clients (login, name, updated_at_local) VALUES ('l', 'n', ?)`,
-      )
+      .prepare(`INSERT INTO clients (login, name, updated_at_local) VALUES ('l', 'n', ?)`)
       .run(now);
     db.prepare(
       `INSERT INTO campaigns (client_local_id, name, type, updated_at_local) VALUES (?, 'k', 'TEXT_CAMPAIGN', ?)`,
