@@ -27,6 +27,9 @@ export { DirectApiClient } from './client';
 export type { ApiCallResult, UnitsListener } from './client';
 
 export { CampaignsService } from './services/campaigns';
+export { AdGroupsService } from './services/adgroups';
+export { AdsService } from './services/ads';
+export { KeywordsService } from './services/keywords';
 
 export {
   DIRECT_BASE_URL,
@@ -44,3 +47,6 @@ export { parseUnitsHeader } from './units';
 
 export type * from './types/common';
 export type * from './types/campaigns';
+export type * from './types/adgroups';
+export type * from './types/ads';
+export type * from './types/keywords';
