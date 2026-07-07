@@ -30,6 +30,9 @@ export { CampaignsService } from './services/campaigns';
 export { AdGroupsService } from './services/adgroups';
 export { AdsService } from './services/ads';
 export { KeywordsService } from './services/keywords';
+export { KeywordBidsService } from './services/keywordbids';
+export { ChangesService } from './services/changes';
+export { DictionariesService } from './services/dictionaries';
 
 export {
   DIRECT_BASE_URL,
@@ -50,3 +53,6 @@ export type * from './types/campaigns';
 export type * from './types/adgroups';
 export type * from './types/ads';
 export type * from './types/keywords';
+export type * from './types/keywordbids';
+export type * from './types/changes';
+export type * from './types/dictionaries';
