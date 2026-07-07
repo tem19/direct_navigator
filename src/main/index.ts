@@ -32,7 +32,10 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
-  db = openDatabase(join(app.getPath('userData'), 'direct_navigator.db'));
+  const dbPath = join(app.getPath('userData'), 'direct_navigator.db');
+  console.log('[direct_navigator] userData:', app.getPath('userData'));
+  console.log('[direct_navigator] DB:', dbPath);
+  db = openDatabase(dbPath);
   registerIpc(db, new TokenStore(app.getPath('userData')));
   Menu.setApplicationMenu(buildAppMenu());
   createWindow();
