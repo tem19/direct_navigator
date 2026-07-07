@@ -28,3 +28,28 @@ export interface AddResult {
 export interface CampaignsAddResult {
   AddResults?: AddResult[];
 }
+
+export interface CampaignUpdateItem {
+  Id: number;
+  Name?: string;
+}
+
+export interface UpdateResult {
+  Id?: number;
+  Errors?: ApiIssue[];
+  Warnings?: ApiIssue[];
+}
+
+export interface CampaignsUpdateResult {
+  UpdateResults?: UpdateResult[];
+}
+
+export interface DeleteResult {
+  Id?: number;
+  Errors?: ApiIssue[];
+  Warnings?: ApiIssue[];
+}
+
+export interface CampaignsDeleteResult {
+  DeleteResults?: DeleteResult[];
+}

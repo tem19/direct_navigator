@@ -99,4 +99,83 @@ export class CampaignRepository {
       )
       .run({ localId, directId, serverHash, now });
   }
+
+  findByDirectId(directId: number): Campaign | null {
+    const row = this.db
+      .prepare('SELECT * FROM campaigns WHERE direct_id = ?')
+      .get(directId) as CampaignRow | undefined;
+    return row ? rowToCampaign(row) : null;
+  }
+
+  /** Вставить кампанию, пришедшую с сервера, как synced. */
+  insertFromServer(input: {
+    directId: number;
+    name: string;
+    status: string;
+    state: string;
+    serverHash: string;
+  }): void {
+    const now = new Date().toISOString();
+    this.db
+      .prepare(
+        `INSERT INTO campaigns
+           (direct_id, name, status, state, sync_status, server_hash, updated_at_local, synced_at)
+         VALUES (@directId, @name, @status, @state, 'synced', @serverHash, @now, @now)`,
+      )
+      .run({ ...input, now });
+  }
+
+  /** Обновить локальную synced-строку серверными данными. */
+  updateFromServer(
+    localId: number,
+    input: { name: string; status: string; state: string; serverHash: string },
+  ): void {
+    const now = new Date().toISOString();
+    this.db
+      .prepare(
+        `UPDATE campaigns SET
+           name = @name, status = @status, state = @state,
+           server_hash = @serverHash, sync_status = 'synced', synced_at = @now
+         WHERE local_id = @localId`,
+      )
+      .run({ localId, ...input, now });
+  }
+
+  markConflict(localId: number): void {
+    this.db
+      .prepare(`UPDATE campaigns SET sync_status = 'conflict' WHERE local_id = ?`)
+      .run(localId);
+  }
+
+  /** Пометить на удаление. Новые (без direct_id) удаляются сразу. */
+  markDeleted(localId: number): void {
+    const c = this.getByLocalId(localId);
+    if (!c) return;
+    if (c.directId === null) {
+      this.hardDelete(localId);
+      return;
+    }
+    const now = new Date().toISOString();
+    this.db
+      .prepare(
+        `UPDATE campaigns SET sync_status = 'deleted', updated_at_local = @now WHERE local_id = @localId`,
+      )
+      .run({ localId, now });
+  }
+
+  /** Физически удалить строку (после успешного удаления на сервере). */
+  hardDelete(localId: number): void {
+    this.db.prepare('DELETE FROM campaigns WHERE local_id = ?').run(localId);
+  }
+
+  /** Обновить серверный хэш после успешного push update (снимок = локальные поля). */
+  refreshServerHash(localId: number, serverHash: string): void {
+    const now = new Date().toISOString();
+    this.db
+      .prepare(
+        `UPDATE campaigns SET server_hash = @serverHash, sync_status = 'synced', synced_at = @now
+         WHERE local_id = @localId`,
+      )
+      .run({ localId, serverHash, now });
+  }
 }

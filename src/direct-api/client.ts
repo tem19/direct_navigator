@@ -30,6 +30,8 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export class DirectClient {
   private readonly maxRetries: number;
   private readonly fetchFn: typeof fetch;
+  /** Последние полученные баллы (units) из заголовка ответа. */
+  lastUnits: Units | null = null;
 
   constructor(private readonly opts: DirectClientOptions) {
     this.maxRetries = opts.maxRetries ?? 4;
@@ -69,7 +71,10 @@ export class DirectClient {
       }
 
       const units = parseUnits(res.headers.get('Units'));
-      if (units) this.opts.onUnits?.(units);
+      if (units) {
+        this.lastUnits = units;
+        this.opts.onUnits?.(units);
+      }
 
       if (res.status >= 500 && attempt <= this.maxRetries) {
         await sleep(this.backoff(attempt));

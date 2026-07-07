@@ -1,5 +1,6 @@
 import type BetterSqlite3 from 'better-sqlite3';
 import { migration001 } from './001_init';
+import { migration002 } from './002_conflicts';
 
 export interface Migration {
   version: number;
@@ -8,7 +9,7 @@ export interface Migration {
 }
 
 /** Все миграции по возрастанию версии. Новые добавляются в конец. */
-export const MIGRATIONS: Migration[] = [migration001];
+export const MIGRATIONS: Migration[] = [migration001, migration002];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.reduce(
   (max, m) => Math.max(max, m.version),
