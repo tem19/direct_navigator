@@ -1,0 +1,23 @@
+appId: com.tem19.directnavigator
+productName: direct_navigator
+directories:
+  output: release
+  buildResources: build
+files:
+  - out/**/*
+  - package.json
+# Целевая платформа — macOS Apple Silicon (arm64).
+mac:
+  target:
+    - target: dmg
+      arch:
+        - arm64
+    - target: zip
+      arch:
+        - arm64
+  category: public.app-category.productivity
+  hardenedRuntime: false
+# Подпись/нотаризация отключены на этапе разработки.
+  identity: null
+# Нативные зависимости (better-sqlite3) пересобираются под Electron ABI.
+npmRebuild: true
