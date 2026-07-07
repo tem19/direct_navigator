@@ -16,6 +16,8 @@ export interface SyncResult {
   conflicts: number;
   failures: number;
   units: UnitsInfo | null;
+  /** Текст первой ошибки от API (для показа причины в UI). */
+  firstError?: string;
 }
 
 export type ProgressCallback = (e: SyncProgressEvent) => void;

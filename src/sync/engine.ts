@@ -24,6 +24,24 @@ function serverSnapshot(item: CampaignGetItem): Record<string, unknown> {
 }
 
 /**
+ * Минимально валидный payload для campaigns.add в песочнице:
+ * имя + дата старта (сегодня) + ручная стратегия (сеть выключена).
+ */
+function buildAddItem(name: string): CampaignAddItem {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  return {
+    Name: name,
+    StartDate: today,
+    TextCampaign: {
+      BiddingStrategy: {
+        Search: { BiddingStrategyType: 'HIGHEST_POSITION' },
+        Network: { BiddingStrategyType: 'SERVING_OFF' },
+      },
+    },
+  };
+}
+
+/**
  * Движок синхронизации локальной БД с Яндекс Директом.
  * Пока охватывает кампании; расширяется на остальные сущности в том же стиле
  * (родители раньше детей при push).
@@ -52,6 +70,7 @@ export class SyncEngine {
       conflicts: this.deps.conflicts.count(),
       failures: pull.failures + push.failures,
       units: this.lastUnits,
+      firstError: push.firstError,
     };
   }
 
@@ -150,11 +169,16 @@ export class SyncEngine {
     let pushed = 0;
     let failures = 0;
 
+    let firstError: string | undefined;
+    const noteError = (msg: string | undefined): void => {
+      if (msg && !firstError) firstError = msg;
+    };
+
     // --- add ---
     if (toAdd.length > 0) {
       const itemByLocalId = new Map<CampaignAddItem, number>();
       const items: CampaignAddItem[] = toAdd.map((c) => {
-        const item: CampaignAddItem = { Name: c.name, TextCampaign: {} };
+        const item = buildAddItem(c.name);
         itemByLocalId.set(item, c.localId);
         return item;
       });
@@ -169,6 +193,7 @@ export class SyncEngine {
           pushed++;
         }
       }
+      result.failed.forEach((f) => noteError(f.errors[0]?.Message));
       failures += result.failed.length;
     }
 
@@ -192,6 +217,7 @@ export class SyncEngine {
           pushed++;
         }
       }
+      result.failed.forEach((f) => noteError(f.errors[0]?.Message));
       failures += result.failed.length;
     }
 
@@ -211,6 +237,7 @@ export class SyncEngine {
           pushed++;
         }
       }
+      result.failed.forEach((f) => noteError(f.errors[0]?.Message));
       failures += result.failed.length;
     }
 
@@ -229,6 +256,7 @@ export class SyncEngine {
       conflicts: this.deps.conflicts.count(),
       failures,
       units: this.lastUnits,
+      firstError,
     };
   }
 

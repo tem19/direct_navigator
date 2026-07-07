@@ -20,8 +20,8 @@ function toProgress(phase: SyncProgress['phase'], r: SyncResult): SyncProgress {
     unitsSpent: r.units?.spent ?? 0,
     message:
       r.failures > 0
-        ? `Готово с ошибками: ${r.failures}. Конфликтов: ${r.conflicts}.`
-        : `Готово. Конфликтов: ${r.conflicts}.`,
+        ? `Готово с ошибками: ${r.failures}${r.firstError ? ` — ${r.firstError}` : ''}. Конфликтов: ${r.conflicts}.`
+        : `Готово: подтянуто ${r.pulled}, отправлено ${r.pushed}. Конфликтов: ${r.conflicts}.`,
   };
 }
 
@@ -50,6 +50,9 @@ export function registerIpc(db: DB, tokens: TokenStore): void {
   ipcMain.handle(CHANNELS.tokenClear, () => tokens.clear());
 
   ipcMain.handle(CHANNELS.campaignsList, () => campaigns.list());
+  ipcMain.handle(CHANNELS.campaignsCreate, (_e, name: string) =>
+    campaigns.insert({ name }),
+  );
 
   ipcMain.handle(CHANNELS.syncPull, async (): Promise<SyncProgress> => {
     if (!tokens.has()) {

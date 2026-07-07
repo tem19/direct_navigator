@@ -12,6 +12,7 @@ interface AppState {
   refreshToken: () => Promise<void>;
   setToken: (token: string) => Promise<void>;
   clearToken: () => Promise<void>;
+  createTestCampaign: () => Promise<void>;
   pull: () => Promise<void>;
   push: () => Promise<void>;
 }
@@ -42,6 +43,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   clearToken: async () => {
     await window.api.token.clear();
     await get().refreshToken();
+  },
+  createTestCampaign: async () => {
+    const name = `Тестовая кампания ${new Date().toLocaleTimeString('ru')}`;
+    await window.api.campaigns.create(name);
+    set({ status: `Создана локально: «${name}» (нажмите Push, чтобы отправить)` });
+    await get().loadCampaigns();
   },
   pull: async () => {
     set({ syncing: true, status: 'Синхронизация (Pull)…' });

@@ -13,6 +13,7 @@ const api: Api = {
   },
   campaigns: {
     list: () => ipcRenderer.invoke(CHANNELS.campaignsList),
+    create: (name) => ipcRenderer.invoke(CHANNELS.campaignsCreate, name),
   },
   sync: {
     pull: () => ipcRenderer.invoke(CHANNELS.syncPull),

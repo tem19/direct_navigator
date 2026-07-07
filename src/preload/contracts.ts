@@ -34,6 +34,8 @@ export interface Api {
   };
   campaigns: {
     list(): Promise<Campaign[]>;
+    /** Создать локальную кампанию (sync_status=new) — уйдёт на сервер при Push. */
+    create(name: string): Promise<Campaign>;
   };
   sync: {
     pull(): Promise<SyncProgress>;
@@ -51,6 +53,7 @@ export const CHANNELS = {
   tokenHas: 'token:has',
   tokenClear: 'token:clear',
   campaignsList: 'campaigns:list',
+  campaignsCreate: 'campaigns:create',
   syncPull: 'sync:pull',
   syncPush: 'sync:push',
   systemPing: 'system:ping',

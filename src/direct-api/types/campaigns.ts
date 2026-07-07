@@ -15,7 +15,9 @@ export interface CampaignsGetResult extends Partial<LimitedBy> {
 
 export interface CampaignAddItem {
   Name: string;
-  /** Тип кампании задаётся вложенным объектом; для примера — TextCampaign. */
+  /** Дата старта в формате YYYY-MM-DD (обязательна для add). */
+  StartDate: string;
+  /** Тип кампании задаётся вложенным объектом; здесь — TextCampaign. */
   TextCampaign?: Record<string, unknown>;
 }
 

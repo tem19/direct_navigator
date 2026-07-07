@@ -12,6 +12,7 @@ export function App(): JSX.Element {
     refreshToken,
     setToken,
     clearToken,
+    createTestCampaign,
     pull,
     push,
   } = useAppStore();
@@ -67,8 +68,16 @@ export function App(): JSX.Element {
           <button disabled={!hasToken || syncing} onClick={() => void push()}>
             ⬆ Push
           </button>
+          <button disabled={syncing} onClick={() => void createTestCampaign()}>
+            + тестовая кампания
+          </button>
           {status && <span style={{ color: '#555' }}>{status}</span>}
         </div>
+        <p style={{ color: '#888', fontSize: 13 }}>
+          «+ тестовая кампания» создаёт кампанию локально (статус <code>new</code>).
+          Нажмите <b>Push</b>, чтобы отправить её в песочницу Директа, затем{' '}
+          <b>Pull</b> — чтобы подтянуть обратно с присвоенным ID.
+        </p>
       </section>
 
       <section>
