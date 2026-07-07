@@ -14,7 +14,9 @@ argument-hint: "[сервис: campaigns|adgroups|ads|keywords|changes|dictionar
 - Один сервис = один URL-сегмент: `.../json/v5/campaigns`, `/adgroups`, `/ads`,
   `/keywords`, `/keywordbids`, `/bids`, `/changes`, `/dictionaries`, `/reports`,
   `/adextensions`, `/sitelinks`, `/vcards`, `/audiencetargets`.
-- Авторизация: заголовок `Authorization: Bearer <OAuth-токен>`.
+- Авторизация: заголовок `Authorization: Bearer <OAuth-токен>`. Токен НЕ хранится
+  в `.env`/файлах в открытом виде — клиент получает его из main-процесса, где он
+  расшифровывается через `safeStorage` (macOS Keychain). Сырой токен не логируем.
 - Обязательные/частые заголовки: `Accept-Language` (`ru`/`en`),
   `Client-Login` (для агентских аккаунтов), `Use-Operator-Units: true`
   при желании списывать баллы оператора.

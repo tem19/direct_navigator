@@ -7,6 +7,12 @@ argument-hint: "[название приложения, по умолчанию 
 кампаний Яндекс Директа (аналог Директ.Коммандера). Название приложения:
 `$1` (если пусто — используй `direct_navigator`).
 
+## Целевая платформа
+
+**macOS на Apple Silicon (arm64, M1–M4)** — единственная цель. Подпись и
+нотаризацию сейчас НЕ настраиваем (только локальная разработка); оставь место в
+конфиге сборки, но не требуй Apple Developer аккаунт.
+
 ## Целевой стек (не отклоняйся без веской причины)
 
 - **Electron** (main + preload + renderer), безопасный IPC через `contextBridge`,
@@ -41,14 +47,28 @@ argument-hint: "[название приложения, по умолчанию 
    (`src/preload/contracts.ts`), сгенерируй тонкий типизированный API в preload,
    реализуй хендлеры в main. Renderer видит только `window.api.*`.
 4. Добавь npm-скрипты: `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`.
-5. Заполни `.env.example`: `YANDEX_OAUTH_TOKEN=`, `YANDEX_API_BASE=https://api-sandbox.direct.yandex.com/json/v5/`,
-   `YANDEX_CLIENT_LOGIN=`. По умолчанию разработка идёт в **sandbox**.
-6. Создай минимальное окно с пустым layout и заглушкой «Кампании», чтобы
+5. Заполни `.env.example`: `YANDEX_API_BASE=https://api-sandbox.direct.yandex.com/json/v5/`,
+   `YANDEX_CLIENT_LOGIN=`. По умолчанию разработка идёт в **sandbox**. OAuth-токен
+   НЕ хранить в `.env`/файлах — только в системном хранилище (см. п.6).
+6. **Токен через Keychain**: настрой безопасное хранение OAuth-токена Яндекс
+   Директа через Electron `safeStorage` (шифрование ключом из macOS Keychain).
+   Токен вводится в UI, шифруется в main, кладётся в БД/файл только в
+   зашифрованном виде. В логи и renderer сырой токен не попадает.
+7. **Нативный модуль**: подключи `better-sqlite3` и настрой `electron-rebuild`,
+   чтобы модуль собирался под arm64/текущий Electron. Добавь `electron-builder`
+   с таргетом `mac` / `arm64` (dmg + zip), `hardenedRuntime` и подпись оставь
+   отключёнными на этапе разработки, `icon` → `.icns` (заглушка допустима).
+8. **Нативность macOS**: системное меню в верхней строке (шаблон меню с
+   About/Quit/Edit), поведение «закрытие окна не завершает приложение»
+   (`window-all-closed` / повторное открытие по клику на Dock).
+9. Создай минимальное окно с пустым layout и заглушкой «Кампании», чтобы
    `npm run dev` запускался.
 
 ## Критерии готовности
 
-- `npm run dev` открывает окно без ошибок в консоли.
+- `npm run dev` открывает окно без ошибок в консоли на Apple Silicon.
+- `better-sqlite3` собран под arm64 и грузится в main без ошибок ABI.
+- OAuth-токен хранится только зашифрованным (`safeStorage`), не в открытом виде.
 - `npm run typecheck` и `npm run lint` проходят.
 - Renderer не импортирует `electron`, `better-sqlite3` или `node:*` напрямую.
 
