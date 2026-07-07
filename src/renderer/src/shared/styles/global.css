@@ -1,0 +1,35 @@
+:root {
+  --bg: #1e1e1e;
+  --bg-panel: #252526;
+  --bg-elevated: #2d2d30;
+  --border: #3c3c3c;
+  --text: #e4e4e4;
+  --text-muted: #9d9d9d;
+  --accent: #ffdb4d;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  color: var(--text);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
