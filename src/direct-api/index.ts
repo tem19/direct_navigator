@@ -33,6 +33,9 @@ export { KeywordsService } from './services/keywords';
 export { KeywordBidsService } from './services/keywordbids';
 export { ChangesService } from './services/changes';
 export { DictionariesService } from './services/dictionaries';
+export { SitelinksService } from './services/sitelinks';
+export { VCardsService } from './services/vcards';
+export { AdExtensionsService } from './services/adextensions';
 
 export {
   DIRECT_BASE_URL,
@@ -56,3 +59,6 @@ export type * from './types/keywords';
 export type * from './types/keywordbids';
 export type * from './types/changes';
 export type * from './types/dictionaries';
+export type * from './types/sitelinks';
+export type * from './types/vcards';
+export type * from './types/adextensions';
